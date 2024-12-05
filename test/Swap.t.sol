@@ -22,14 +22,16 @@ contract SwapTest is Test {
 
     address public myAddress = 0xD43ABDA398A684b25595b5460A8040005d69d32d;
 
+    uint104 public blockNumber = 65050080;
+
 
     function setUp() public {
-        vm.createSelectFork("mainnet", 65046125);
+        vm.createSelectFork("mainnet", blockNumber);
         swap = new Swap(ISwapRouter02(swapRouter), WMATIC);
     }
 
     function testFork() view public {
-        assertEq(block.number, 65046125);
+        assertEq(block.number, blockNumber);
     }
 
     function testDeposit() public {
@@ -70,12 +72,12 @@ contract SwapTest is Test {
         vm.prank(addressWithPOL);
         swap.deposit{value: 1 ether}();
 
-        IERC20 usdc = IERC20(USDC);
+        IERC20 token = IERC20(UNI);
 
         vm.prank(myAddress);
-        uint amountOut = swap.swapCoinToToken(USDC, 3000, 1 ether, 693900, addressWithPOL);
+        uint amountOut = swap.swapCoinToToken(UNI, 3000, 1 ether, 0.0477468 ether, addressWithPOL);
 
-        assertEq(usdc.balanceOf(addressWithPOL), amountOut);
+        assertEq(token.balanceOf(addressWithPOL), amountOut);
     }
 
     function testSwapCoinToTokenWithMoreDeposit() public {
